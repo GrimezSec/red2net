@@ -1,0 +1,6 @@
+test-ping.py:
+  - p
+
+test-portscan.py:
+  - t
+  - p
