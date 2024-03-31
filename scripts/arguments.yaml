@@ -5,5 +5,9 @@ test-portscan.py:
   - t
   - p
 
-dhcp-starvation.py
+dhcp-starvation.py:
   - i
+
+arp-poisoning.py:
+  -i
+  -t
