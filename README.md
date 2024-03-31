@@ -36,6 +36,13 @@ Red2Net is a simple network testing tool developed in Python with GUI
 
 5. Choose a script from the dropdown menu, enter the required arguments, and click the "Run Script" button.
 
+if you get "ModuleNotFoundError: No module named 'tkinter'" error run
+
+    ```
+    sudo apt install python3-tk
+    ```
+
+
 ## Adding New Tests
 
 To add a new test, follow these steps:
