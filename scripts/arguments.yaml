@@ -4,3 +4,6 @@ test-ping.py:
 test-portscan.py:
   - t
   - p
+
+dhcp-starvation.py
+  - i
