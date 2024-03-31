@@ -25,15 +25,22 @@ class Red2NetApp:
         self.scripts = [file for file in os.listdir(self.script_dir) if file.endswith((".py", ".c"))]
         
     def create_widgets(self):
-        tk.Label(self.root, text="Choose a script:").pack()
+        self.root.config(bg="#424242")  # Arka plan rengini ayarla
+
+        tk.Label(self.root, text="Choose a script:", bg="#424242", fg="white").pack()
         self.script_menu = tk.OptionMenu(self.root, self.script_var, *self.scripts)
+        self.script_menu.config(bg="#424242", fg="white")  # Arka plan ve yazı rengini ayarla
         self.script_menu.pack()
         
-        tk.Button(self.root, text="Run Script", command=self.run_script).pack()
-        
+        run_button = tk.Button(self.root, text="Run Script", command=self.run_script, bg="#30120C", fg="white")
+        run_button.pack()
+
         # Terminal output bölümü
-        self.output_text = tk.Text(self.root, height=20, width=80, bg="black", fg="white", relief="flat")
+        output_label = tk.Label(self.root, text="Terminal Output", bg="#424242", fg="white")
+        output_label.pack(anchor="w")  # Sol üst köşede metni ekleyin
+        self.output_text = tk.Text(self.root, height=20, width=80, bg="#050505", fg="white", relief="flat")
         self.output_text.pack(pady=10)
+
         
     def run_script(self):
         self.output_text.delete(1.0, tk.END)  # Önceki çıktıyı temizle
@@ -75,12 +82,48 @@ class Red2NetApp:
     
     def get_parameters(self, arguments):
         params = {}
-        for arg in arguments:
-            user_input = simpledialog.askstring("Input", f"Enter value for {arg}:")
-            if user_input is None:  # İptal edildi
-                return None
-            params[arg] = user_input
-        return params
+        dialog = ArgumentDialog(self.root, arguments)
+        self.root.wait_window(dialog.top)
+        if dialog.result is None:  # İptal edildi
+            return None
+        else:
+            return dialog.result
+
+class ArgumentDialog:
+    def __init__(self, parent, arguments):
+        self.parent = parent
+        self.arguments = arguments
+        
+        self.top = tk.Toplevel(parent)
+        self.top.title("Enter Arguments")
+        self.top.config(bg="#424242")  # Arka plan rengini ayarla
+        
+        self.entries = {}
+        
+        # Argument alanlarını oluştur
+        for i, arg in enumerate(arguments):
+            label = tk.Label(self.top, text=arg, bg="#424242", fg="white")  # Arka plan ve yazı rengini ayarla
+            label.grid(row=i, column=0, padx=10, pady=5, sticky="w")  # Sol üst köşede metni ekleyin
+            entry = tk.Entry(self.top)
+            entry.config(bg="white", fg="#333")  # Arka plan ve yazı rengini ayarla
+            entry.grid(row=i, column=1, padx=10, pady=5, sticky="e")  # Sağ üst köşede metin kutusunu ekleyin
+            self.entries[arg] = entry
+        
+        # Tamam ve İptal düğmelerini ekleyin
+        ok_button = tk.Button(self.top, text="OK", command=self.ok, bg="#30120C", fg="white")
+        ok_button.grid(row=len(arguments), column=0, columnspan=2, padx=10, pady=10)  # Düğmeleri altta ortala
+        cancel_button = tk.Button(self.top, text="Cancel", command=self.cancel, bg="#30120C", fg="white")
+        cancel_button.grid(row=len(arguments) + 1, column=0, columnspan=2, padx=10, pady=5)  # Düğmeleri altta ortala
+        
+        self.result = None
+
+    def ok(self):
+        self.result = {arg: entry.get() for arg, entry in self.entries.items()}
+        self.top.destroy()
+        
+    def cancel(self):
+        self.result = None
+        self.top.destroy()
 
 def show_ascii_art():
     art_file = os.path.join("utils", "ascii_art.txt")
