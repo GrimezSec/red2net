@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import yaml
 import subprocess
@@ -16,7 +17,7 @@ class Red2NetApp:
         self.load_scripts()
         
         self.script_var = tk.StringVar(root)
-        self.script_var.set(self.scripts[0]) 
+        self.script_var.set(self.scripts[0])  # Varsayılan olarak ilk scripti seç
         
         self.create_widgets()
         
@@ -30,14 +31,15 @@ class Red2NetApp:
         
         tk.Button(self.root, text="Run Script", command=self.run_script).pack()
         
-        
-        self.output_text = tk.Text(self.root, height=20, width=80, bg="white", fg="#333", relief="flat")
+        # Terminal output bölümü
+        self.output_text = tk.Text(self.root, height=20, width=80, bg="black", fg="white", relief="flat")
         self.output_text.pack(pady=10)
         
     def run_script(self):
-        self.output_text.delete(1.0, tk.END) 
+        self.output_text.delete(1.0, tk.END)  # Önceki çıktıyı temizle
         
         selected_script = self.script_var.get()
+        self.output_text.insert(tk.END, f"{selected_script} starting...\n\n")  # Script başladı mesajını yaz
         
         arguments = self.load_arguments(selected_script)
         if not arguments:
@@ -52,11 +54,16 @@ class Red2NetApp:
         for arg, value in params.items():
             command.extend(["-" + arg, value])
         
-        output = subprocess.run(command, capture_output=True, text=True)
+        # Çalıştırılan komutu ekrana yaz
+        self.output_text.insert(tk.END, "$ " + " ".join(command) + "\n\n")
         
-        
-        self.output_text.insert(tk.END, output.stdout)
-        
+        try:
+            # Komutu çalıştır ve çıktıyı ekrana yaz
+            output = subprocess.run(command, capture_output=True, text=True, check=True)
+            self.output_text.insert(tk.END, output.stdout)
+        except subprocess.CalledProcessError as e:
+            self.output_text.insert(tk.END, f"Error: {e.stderr}\n")
+ 
     def load_arguments(self, script_name):
         arguments_file = os.path.join(self.script_dir, "arguments.yaml")
         if os.path.exists(arguments_file):
@@ -68,33 +75,12 @@ class Red2NetApp:
     
     def get_parameters(self, arguments):
         params = {}
-        dialog = tk.Toplevel(self.root)
-        dialog.title("Enter Arguments")
-
         for arg in arguments:
-            arg_frame = tk.Frame(dialog)
-            arg_frame.pack(pady=5)
-
-            tk.Label(arg_frame, text=f"{arg}:", width=10).pack(side=tk.LEFT)
-
-            entry_var = tk.StringVar()
-            entry = tk.Entry(arg_frame, textvariable=entry_var)
-            entry.pack(side=tk.LEFT)
-
-            params[arg] = entry_var
-
-        ok_button = tk.Button(dialog, text="OK", command=dialog.destroy)
-        ok_button.pack(pady=10)
-
-        dialog.transient(self.root)  
-        dialog.grab_set() 
-        self.root.wait_window(dialog)  
-
-
-        if not all(param.get() for param in params.values()):
-            return None
-
-        return {arg: param.get() for arg, param in params.items()}
+            user_input = simpledialog.askstring("Input", f"Enter value for {arg}:")
+            if user_input is None:  # İptal edildi
+                return None
+            params[arg] = user_input
+        return params
 
 def show_ascii_art():
     art_file = os.path.join("utils", "ascii_art.txt")
@@ -103,12 +89,17 @@ def show_ascii_art():
             ascii_art = f.read()
         print(ascii_art)
         time.sleep(3)
-        subprocess.call("clear" if os.name == "posix" else "cls", shell=True)
+        subprocess.call("clear" if os.name == "posix" else "cls", shell=True)  # Terminali temizle
     else:
         print("ASCII art file not found!")
 
 if __name__ == "__main__":
-    show_ascii_art()  
+    # Kullanıcı sudo izniyle çalıştırmadıysa uygulamadan çık
+    if os.geteuid() != 0:
+        print("Please run the application with sudo privileges.")
+        exit()
+    
+    show_ascii_art()  # ASCII artı göster
     root = tk.Tk()
     app = Red2NetApp(root)
     root.mainloop()

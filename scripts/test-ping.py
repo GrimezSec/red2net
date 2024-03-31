@@ -10,7 +10,7 @@ def send_ping(target_ip):
         print(f"No reply received from {target_ip}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] != "-p":
+    if len(sys.argv) != 3 or sys.argv[1] != "-t":
         print("Usage: ping.py -p <target_ip>")
         sys.exit(1)
     
