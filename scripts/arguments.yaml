@@ -9,5 +9,8 @@ dhcp-starvation.py:
   - i
 
 arp-poisoning.py:
-  -i
-  -t
+  - i
+  - t
+
+ping.sh:
+  - t

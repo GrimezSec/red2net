@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import yaml
 import subprocess
@@ -22,7 +21,7 @@ class Red2NetApp:
         self.create_widgets()
         
     def load_scripts(self):
-        self.scripts = [file for file in os.listdir(self.script_dir) if file.endswith((".py", ".c"))]
+        self.scripts = [file for file in os.listdir(self.script_dir) if file.endswith((".py", ".c", ".sh"))]
         
     def create_widgets(self):
         self.root.config(bg="#424242")  # Arka plan rengini ayarla
@@ -57,19 +56,26 @@ class Red2NetApp:
         if not params:
             return
         
-        command = ["python", os.path.join(self.script_dir, selected_script)]
+        script_path = os.path.join(self.script_dir, selected_script)
+        command = []
+        if selected_script.endswith((".sh", ".c")):
+            command.extend(["sudo", "./" + selected_script]) 
+        else:
+            command.extend(["sudo", "python", script_path])
+        
         for arg, value in params.items():
             command.extend(["-" + arg, value])
         
-        # Çalıştırılan komutu ekrana yaz
         self.output_text.insert(tk.END, "$ " + " ".join(command) + "\n\n")
         
         try:
-            # Komutu çalıştır ve çıktıyı ekrana yaz
-            output = subprocess.run(command, capture_output=True, text=True, check=True)
+            output = subprocess.run(command, capture_output=True, text=True, check=True, cwd=self.script_dir, env={"PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"})
             self.output_text.insert(tk.END, output.stdout)
         except subprocess.CalledProcessError as e:
             self.output_text.insert(tk.END, f"Error: {e.stderr}\n")
+
+
+
  
     def load_arguments(self, script_name):
         arguments_file = os.path.join(self.script_dir, "arguments.yaml")
@@ -84,7 +90,7 @@ class Red2NetApp:
         params = {}
         dialog = ArgumentDialog(self.root, arguments)
         self.root.wait_window(dialog.top)
-        if dialog.result is None:  # İptal edildi
+        if dialog.result is None:
             return None
         else:
             return dialog.result
@@ -96,24 +102,22 @@ class ArgumentDialog:
         
         self.top = tk.Toplevel(parent)
         self.top.title("Enter Arguments")
-        self.top.config(bg="#424242")  # Arka plan rengini ayarla
+        self.top.config(bg="#424242")
         
         self.entries = {}
         
-        # Argument alanlarını oluştur
         for i, arg in enumerate(arguments):
-            label = tk.Label(self.top, text=arg, bg="#424242", fg="white")  # Arka plan ve yazı rengini ayarla
-            label.grid(row=i, column=0, padx=10, pady=5, sticky="w")  # Sol üst köşede metni ekleyin
+            label = tk.Label(self.top, text=arg, bg="#424242", fg="white")  
+            label.grid(row=i, column=0, padx=10, pady=5, sticky="w")  
             entry = tk.Entry(self.top)
-            entry.config(bg="white", fg="#333")  # Arka plan ve yazı rengini ayarla
-            entry.grid(row=i, column=1, padx=10, pady=5, sticky="e")  # Sağ üst köşede metin kutusunu ekleyin
+            entry.config(bg="white", fg="#333") 
+            entry.grid(row=i, column=1, padx=10, pady=5, sticky="e")  
             self.entries[arg] = entry
         
-        # Tamam ve İptal düğmelerini ekleyin
         ok_button = tk.Button(self.top, text="OK", command=self.ok, bg="#30120C", fg="white")
-        ok_button.grid(row=len(arguments), column=0, columnspan=2, padx=10, pady=10)  # Düğmeleri altta ortala
+        ok_button.grid(row=len(arguments), column=0, columnspan=2, padx=10, pady=10) 
         cancel_button = tk.Button(self.top, text="Cancel", command=self.cancel, bg="#30120C", fg="white")
-        cancel_button.grid(row=len(arguments) + 1, column=0, columnspan=2, padx=10, pady=5)  # Düğmeleri altta ortala
+        cancel_button.grid(row=len(arguments) + 1, column=0, columnspan=2, padx=10, pady=5) 
         
         self.result = None
 
@@ -132,17 +136,12 @@ def show_ascii_art():
             ascii_art = f.read()
         print(ascii_art)
         time.sleep(3)
-        subprocess.call("clear" if os.name == "posix" else "cls", shell=True)  # Terminali temizle
+        subprocess.call("clear" if os.name == "posix" else "cls", shell=True)  
     else:
         print("ASCII art file not found!")
 
 if __name__ == "__main__":
-    # Kullanıcı sudo izniyle çalıştırmadıysa uygulamadan çık
-    if os.geteuid() != 0:
-        print("Please run the application with sudo privileges.")
-        exit()
     
-    show_ascii_art()  # ASCII artı göster
     root = tk.Tk()
     app = Red2NetApp(root)
     root.mainloop()
