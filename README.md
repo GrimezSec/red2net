@@ -17,7 +17,7 @@ Red2Net is a simple network testing tool developed in Python with GUI
 1. Clone the repository to your local machine:
 
     ```
-    git clone https://github.com/your-username/red2net.git
+    git clone https://github.com/GrimezSec/red2net.git
     ```
 
 2. Navigate to the project directory:
