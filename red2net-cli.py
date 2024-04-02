@@ -1,9 +1,9 @@
-import os, time
-import yaml
+import os
 import subprocess
-from utils.asciiart import join_art_from_files 
-class Red2NetCLI:
+import yaml
+from utils.asciiart import join_art_from_files
 
+class Red2NetCLI:
     def __init__(self):
         self.script_dir = "scripts"
         self.arguments_file = "scripts/arguments.yaml"
@@ -77,13 +77,13 @@ class Red2NetCLI:
             print(f"Error: {e.stderr}")
 
 def show_ascii_art():
-        art_file = os.path.join("utils", "ascii_art.txt")
-        if os.path.exists(art_file):
-            with open(art_file, "r") as f:
-                ascii_art = f.read()
-            print(ascii_art)
-        else:
-            print("ASCII art file not found!")
+    art_file = os.path.join("utils", "ascii_art.txt")
+    if os.path.exists(art_file):
+        with open(art_file, "r") as f:
+            ascii_art = f.read()
+        print(ascii_art)
+    else:
+        print("ASCII art file not found!")
 
 if __name__ == "__main__":
     combined_art = join_art_from_files(str_between=' ')
