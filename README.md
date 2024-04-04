@@ -57,3 +57,9 @@ To add a new test, follow these steps:
 2. Update the `arguments.yaml` file with the arguments required by the new script.
 
 3. Restart the application to see the new test in the dropdown menu.
+
+## TODO
+1. Add installation script
+2. Add run script
+3. Make improvements about sudo privileges
+4. Add a function to record network and save with pcap format
