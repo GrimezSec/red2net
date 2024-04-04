@@ -10,13 +10,13 @@ class Red2NetApp:
         self.root = root
         self.root.title("Red2Net")
         
-        self.script_dir = "scripts"
-        self.arguments_file = "scripts/arguments.yaml"
+        self.script_dir = "playbooks"
+        self.arguments_file = "playbooks/arguments.yaml"
         
         self.load_scripts()
         
         self.script_var = tk.StringVar(root)
-        self.script_var.set(self.scripts[0])  # Varsayılan olarak ilk scripti seç
+        self.script_var.set(self.scripts[0])
         
         self.create_widgets()
         
@@ -24,28 +24,27 @@ class Red2NetApp:
         self.scripts = [file for file in os.listdir(self.script_dir) if file.endswith((".py", ".c", ".sh"))]
         
     def create_widgets(self):
-        self.root.config(bg="#424242")  # Arka plan rengini ayarla
+        self.root.config(bg="#424242")
 
         tk.Label(self.root, text="Choose a script:", bg="#424242", fg="white").pack()
         self.script_menu = tk.OptionMenu(self.root, self.script_var, *self.scripts)
-        self.script_menu.config(bg="#424242", fg="white")  # Arka plan ve yazı rengini ayarla
+        self.script_menu.config(bg="#424242", fg="white") 
         self.script_menu.pack()
         
         run_button = tk.Button(self.root, text="Run Script", command=self.run_script, bg="#30120C", fg="white")
         run_button.pack()
 
-        # Terminal output bölümü
         output_label = tk.Label(self.root, text="Terminal Output", bg="#424242", fg="white")
-        output_label.pack(anchor="w")  # Sol üst köşede metni ekleyin
+        output_label.pack(anchor="w")
         self.output_text = tk.Text(self.root, height=20, width=80, bg="#050505", fg="white", relief="flat")
         self.output_text.pack(pady=10)
 
         
     def run_script(self):
-        self.output_text.delete(1.0, tk.END)  # Önceki çıktıyı temizle
+        self.output_text.delete(1.0, tk.END)
         
         selected_script = self.script_var.get()
-        self.output_text.insert(tk.END, f"{selected_script} starting...\n\n")  # Script başladı mesajını yaz
+        self.output_text.insert(tk.END, f"{selected_script} starting...\n\n") 
         
         arguments = self.load_arguments(selected_script)
         if not arguments:

@@ -5,8 +5,8 @@ from utils.asciiart import join_art_from_files
 
 class Red2NetCLI:
     def __init__(self):
-        self.script_dir = "scripts"
-        self.arguments_file = "scripts/arguments.yaml"
+        self.script_dir = "playbooks/"
+        self.arguments_file = "playbooks/arguments.yaml"
         self.scripts = self.load_scripts()
         self.selected_script = None
 
@@ -62,7 +62,7 @@ class Red2NetCLI:
         script_path = os.path.join(self.script_dir, self.selected_script)
         command = []
         if self.selected_script.endswith((".sh", ".c")):
-            command.extend(["sudo", "./" + self.selected_script])
+            command.extend(["./" + self.selected_script])
         else:
             command.extend(["sudo", "python3", script_path])
 
