@@ -1,7 +1,6 @@
 # red2net
 
-![Designer](https://github.com/GrimezSec/red2net/assets/128565483/aced15f8-4cbe-4635-959b-284785cc8863)
-
+<img src="https://github.com/GrimezSec/red2net/assets/128565483/aced15f8-4cbe-4635-959b-284785cc8863" alt="Designer" style="width: 300px; height: auto;"/>
 
 Red2Net is a simple network testing tool developed in Python with GUI
 (on development)
