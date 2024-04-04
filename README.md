@@ -9,7 +9,7 @@ Red2Net is a simple network testing tool developed in Python with GUI and CLI ve
 
 ## Features
 
-- Run network tests using Python or C scripts.
+- Run network tests using Python, Bash or C scripts.
 - Graphical user interface for easy interaction.
 - Users can add new tests by writing scripts and updating the arguments.yaml file.
 - Modular structure for easy maintenance and extension.
