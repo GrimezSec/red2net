@@ -65,7 +65,6 @@ class Red2NetCLI:
         if self.selected_script.endswith((".sh", ".c")):
             os.chdir(self.script_dir) 
             if self.selected_script.endswith(".c"):
-
                 compiled_name = self.selected_script[:-2]
                 if os.path.exists(compiled_name):
                     os.remove(compiled_name)

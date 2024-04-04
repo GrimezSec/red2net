@@ -60,7 +60,7 @@ class Red2NetApp:
         if selected_script.endswith((".sh", ".c")):
             command.extend(["sudo", "./" + selected_script]) 
         else:
-            command.extend(["sudo", "python", script_path])
+            command.extend(["sudo", "python", selected_script])
         
         for arg, value in params.items():
             command.extend(["-" + arg, value])
