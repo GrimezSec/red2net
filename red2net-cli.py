@@ -5,7 +5,7 @@ from utils.asciiart import join_art_from_files
 
 class Red2NetCLI:
     def __init__(self):
-        self.script_dir = "playbooks/"
+        self.script_dir = "playbooks"
         self.arguments_file = "playbooks/arguments.yaml"
         self.scripts = self.load_scripts()
         self.selected_script = None
@@ -61,11 +61,21 @@ class Red2NetCLI:
 
         script_path = os.path.join(self.script_dir, self.selected_script)
         command = []
+
         if self.selected_script.endswith((".sh", ".c")):
-            command.extend(["./" + self.selected_script])
+            os.chdir(self.script_dir) 
+            if self.selected_script.endswith(".c"):
+
+                compiled_name = self.selected_script[:-2]
+                if os.path.exists(compiled_name):
+                    os.remove(compiled_name)
+                subprocess.run(["gcc", "-o", compiled_name, self.selected_script])
+                command.append(f"./{compiled_name}") 
+            else:
+                command.append(f"./{self.selected_script}") 
         else:
             command.extend(["sudo", "python3", script_path])
-
+# Run Python script
         for arg, value in params.items():
             command.extend(["-" + arg, value])
 

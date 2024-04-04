@@ -14,3 +14,6 @@ arp-poisoning.py:
 
 ping.sh:
   - t
+
+ctest.c:
+  - t
