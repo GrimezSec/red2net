@@ -76,14 +76,18 @@ class Red2NetCLI:
             command.extend(["sudo", "python3", script_path])
 # Run Python script
         for arg, value in params.items():
-            command.extend(["-" + arg, value])
+            if value is not None:  # Check if value is not None
+                if arg is not None:  # Check if arg is not None
+                    command.extend(["-" + arg, value])
+            else:
+                command.append(value)  # If arg is None, append only value
 
         print("$ " + " ".join(command))
-
         try:
             subprocess.run(command, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error: {e.stderr}")
+
 
 def show_ascii_art():
     art_file = os.path.join("utils", "ascii_art.txt")
