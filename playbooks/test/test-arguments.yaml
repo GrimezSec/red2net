@@ -1,0 +1,8 @@
+test.c:
+  - a
+
+test.py:
+  - a 
+
+test.sh
+  - a
