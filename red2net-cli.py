@@ -2,7 +2,7 @@ import os
 import subprocess
 import time
 import yaml
-from utils.asciiart import join_art_from_files
+from art.asciiart import join_art_from_files
 
 class Red2NetCLI:
     def __init__(self):
